@@ -1,25 +1,55 @@
 package main
 
 import (
-	"net/http"
+	"cronbackend/controller"
+	"cronbackend/db"
+	"cronbackend/routes"
+	"log"
 	"github.com/gin-gonic/gin"
-	// "github.com/sujith-rek/cron-it/bacnkend/db"
+	"github.com/gin-contrib/cors"
+
 )
 
+var (
+	userController controller.UserController
+	userRouter     routes.UserRouter
+	server *gin.Engine
+)
+
+
+func init() {
+	config, err := db.LoadConfig(".")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	db.ConnectDB(&config)
+
+	userController = *controller.NewUserController(db.DB)
+	userRouter = *routes.NewUserRouter(&userController)
+
+	server = gin.Default()
+
+}
+
+
 func main() {
-	r := gin.Default()
+	config, err := db.LoadConfig(".")
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowOrigins = []string{"http://localhost:8000", config.ClientOrigin}
+	corsConfig.AllowCredentials = true
 
-			"message": "Hello World",
-		})
-	})
+	server.Use(cors.New(corsConfig))
 
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
-	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	router := server.Group("/api")
+	
+	userRouter.RegisterRoutes(router)
+
+	log.Fatal(server.Run(":" + config.ServerPort))
+
+
 }

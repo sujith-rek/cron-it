@@ -42,7 +42,7 @@ testem.log
 Thumbs.db
 
 # Env files
-.env
+*.env
 .env.local
 
 .nx

@@ -9,3 +9,21 @@ type User struct {
 	ScheduledJobs []ScheduledJobs `gorm:"foreignKey:UserID" json:"scheduled_jobs"`
 	CheckJobs     []CheckJobs     `gorm:"foreignKey:UserID" json:"check_jobs"`
 }
+
+type UserSignUp struct {
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
+	Name     string `json:"name"`
+}
+
+type UserLogin struct {
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+
+type UserResponse struct {
+	ID    string `json:"id"`
+	Email string `json:"email"`
+	Name  string `json:"name"`
+	Limit int    `json:"limit"`
+}
