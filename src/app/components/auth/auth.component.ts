@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth/auth.service';
 import { FormsModule } from '@angular/forms';
 import cookie from 'cookie';
+import { JwtService } from '../../services/jwt/jwt.service';
 
 @Component({
   selector: 'app-auth',
@@ -11,7 +12,7 @@ import cookie from 'cookie';
   styleUrl: './auth.component.scss'
 })
 export class AuthComponent {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private jwtService: JwtService) {}
 
   name: string = '';
   email: string = '';
@@ -80,8 +81,7 @@ export class AuthComponent {
   }
 
   readMyCookie() {
-    console.log(cookie.parse(document.cookie));
+    this.jwtService.getCookie('user');
   }
-
 
 }

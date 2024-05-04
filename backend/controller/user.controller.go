@@ -4,6 +4,7 @@ import (
 	"cronbackend/db"
 	"cronbackend/models"
 	"cronbackend/utils"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
@@ -108,8 +109,11 @@ func (uc *UserController) Login(c *gin.Context) {
 		return
 	}
 
+	userInString, _ := json.Marshal(userResponse)
+
 	c.SetCookie("access_token", a_token, config.AccessTokenMaxAge*60 + 19800, "/", "", false, true)
 	c.SetCookie("refresh_token", r_token, config.RefreshTokenMaxAge*60 + 19800, "/", "", false, true)
+	c.SetCookie("user",string(userInString) , config.AccessTokenMaxAge*60 + 19800, "/", "", false, false)
 	c.JSON(http.StatusOK, gin.H{"message": "user logged in", "user": userResponse})
 
 }
