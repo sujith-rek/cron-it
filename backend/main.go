@@ -13,6 +13,13 @@ import (
 var (
 	userController controller.UserController
 	userRouter     routes.UserRouter
+
+	ScheduleController controller.ScheduleController
+	ScheduleRouter     routes.ScheduleRouter
+
+	CheckController controller.CheckingController
+	CheckRouter     routes.CheckRouter
+
 	server *gin.Engine
 )
 
@@ -27,6 +34,12 @@ func init() {
 
 	userController = *controller.NewUserController(db.DB)
 	userRouter = *routes.NewUserRouter(&userController)
+
+	ScheduleController = *controller.NewScheduleController(db.DB)
+	ScheduleRouter = *routes.NewScheduleRouter(&ScheduleController)
+
+	CheckController = *controller.NewCheckingController(db.DB)
+	CheckRouter = *routes.NewCheckRouter(&CheckController)
 
 	server = gin.Default()
 
@@ -48,6 +61,8 @@ func main() {
 	router := server.Group("/api")
 	
 	userRouter.RegisterRoutes(router)
+	ScheduleRouter.RegisterRoutes(router)
+	CheckRouter.RegisterRoutes(router)
 
 	log.Fatal(server.Run(":" + config.ServerPort))
 

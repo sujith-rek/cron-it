@@ -7,13 +7,10 @@ import (
 )
 
 type Config struct {
-	ConnectionString string `mapstructure:"CONNECTION_STRING"`
-
-	ClientOrigin string `mapstructure:"CLIENT_ORIGIN"`
-	ServerPort   string `mapstructure:"PORT"`
-
-	Migrate bool `mapstructure:"MIGRATE"`
-
+	ConnectionString       string        `mapstructure:"CONNECTION_STRING"`
+	ClientOrigin           string        `mapstructure:"CLIENT_ORIGIN"`
+	ServerPort             string        `mapstructure:"PORT"`
+	Migrate                bool          `mapstructure:"MIGRATE"`
 	AccessTokenPrivateKey  string        `mapstructure:"ACCESS_TOKEN_PRIVATE_KEY"`
 	AccessTokenPublicKey   string        `mapstructure:"ACCESS_TOKEN_PUBLIC_KEY"`
 	RefreshTokenPrivateKey string        `mapstructure:"REFRESH_TOKEN_PRIVATE_KEY"`
