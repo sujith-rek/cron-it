@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { constants } from '../constants';
-import { SignInInput,SignUpInput } from '../types';
+import { constants } from '../../constants';
+import { SignInInput,SignUpInput } from '../../types';
 
 @Injectable({
   providedIn: 'root'
