@@ -35,9 +35,9 @@ func UnwrapUserToken() gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": err.Error()})
 			return
 		}
-
+		id := sub.(map[string]interface{})["id"]
 		var user models.User
-		result := db.DB.First(&user, "id = ?", fmt.Sprint(sub))
+		result := db.DB.First(&user, "id = ?", fmt.Sprint(id))
 		if result.Error != nil {
 			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"status": "fail", "message": "the user belonging to this token no logger exists"})
 			return

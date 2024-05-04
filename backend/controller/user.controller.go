@@ -4,10 +4,12 @@ import (
 	"cronbackend/db"
 	"cronbackend/models"
 	"cronbackend/utils"
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
+	"fmt"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type UserController struct {
@@ -106,9 +108,8 @@ func (uc *UserController) Login(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("access_token", a_token, int(config.AccessTokenExpiresIn.Seconds()), "/", "", false, true)
-	c.SetCookie("refresh_token", r_token, int(config.RefreshTokenExpiresIn.Seconds()), "/", "", false, true)
-
+	c.SetCookie("access_token", a_token, config.AccessTokenMaxAge*60 + 19800, "/", "", false, true)
+	c.SetCookie("refresh_token", r_token, config.RefreshTokenMaxAge*60 + 19800, "/", "", false, true)
 	c.JSON(http.StatusOK, gin.H{"message": "user logged in", "user": userResponse})
 
 }
@@ -146,13 +147,18 @@ func (uc *UserController) RefreshToken(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("access_token", a_token, int(config.AccessTokenExpiresIn.Seconds()), "/", "", false, true)
-	c.SetCookie("refresh_token", r_token, int(config.RefreshTokenExpiresIn.Seconds()), "/", "", false, true)
+	c.SetCookie("access_token", a_token, config.AccessTokenMaxAge*60 + 19800, "/", "", false, true)
+	c.SetCookie("refresh_token", r_token, config.RefreshTokenMaxAge*60 + 19800, "/", "", false, true)
 
 	c.JSON(http.StatusOK, gin.H{"message": "token refreshed"})
 }
 
 func (uc *UserController) Logout(c *gin.Context) {
+
+	// get the user from the context
+	user, _ := c.Get("user")
+	fmt.Println(user)
+
 	c.SetCookie("access_token", "", -1, "/", "", false, true)
 	c.SetCookie("refresh_token", "", -1, "/", "", false, true)
 
