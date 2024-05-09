@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth/auth.service';
 import { FormsModule } from '@angular/forms';
-import cookie from 'cookie';
 import { JwtService } from '../../services/jwt/jwt.service';
 
 @Component({
@@ -78,10 +77,6 @@ export class AuthComponent {
         console.log(err);
       }
     });
-  }
-
-  readMyCookie() {
-    this.jwtService.getCookie('user');
   }
 
 }
