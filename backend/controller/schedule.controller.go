@@ -4,6 +4,8 @@ import (
 	"cronbackend/chores"
 	"cronbackend/models"
 	"cronbackend/utils"
+
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"net/http"
@@ -52,6 +54,11 @@ func (sc *ScheduleController) CreateJobSchedule(c *gin.Context) {
 		return
 	}
 
+	if !utils.ValidateCronString(inputJob.ExecString) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid cron string"})
+		return
+	}
+
 	clusterID = sc.CM.FindClusterByExecString(inputJob.ExecString)
 	clusterName := utils.ExtractNameFromExecString(inputJob.ExecString)
 
@@ -67,7 +74,7 @@ func (sc *ScheduleController) CreateJobSchedule(c *gin.Context) {
 			ID:              clusterID,
 			Name:            clusterName,
 			ExecutionString: inputJob.ExecString,
-			Size:            1,
+			Size:            0,
 		}
 
 		res := sc.DB.Create(&clusterDB)
@@ -87,7 +94,6 @@ func (sc *ScheduleController) CreateJobSchedule(c *gin.Context) {
 		URL:              inputJob.URL,
 		AdditionalParams: inputJob.AdditionalParams,
 	}
-
 	res = sc.DB.Create(&jobDB)
 
 	if res.Error != nil {
@@ -95,6 +101,47 @@ func (sc *ScheduleController) CreateJobSchedule(c *gin.Context) {
 		return
 	}
 
+	// update cluster size in db
+	res = sc.DB.Model(&models.Cluster{}).Where("id = ?", clusterID).Update("size", gorm.Expr("size + 1"))
+
+	if res.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": res.Error.Error()})
+		return
+	}
+
+	// update user limit in db done through trigger
+	jobChore := chores.Job{
+		ID:               jobDB.ID,
+		Name:             jobDB.Name,
+		UserID:           jobDB.UserID,
+		ClusterID:        jobDB.ClusterID,
+		ExecString:       jobDB.ExecString,
+		AdditionalParams: jobDB.AdditionalParams,
+		URL:              jobDB.URL,
+	}
+
+	sc.CM.AddJobToCluster(clusterID, jobChore)
+
 	c.JSON(http.StatusOK, gin.H{"job": jobDB})
+
+}
+
+func (sc *ScheduleController) PrintCluster(c *gin.Context) {
+
+	for _, cluster := range sc.CM.Clusters {
+
+		fmt.Println("Cluster: ", cluster)
+
+		for _, job := range cluster.Jobs {
+			fmt.Println("Cluster: ", cluster.Name)
+			fmt.Println("Job: ", job.Name)
+			fmt.Println("ExecString: ", job.ExecString)
+			fmt.Println("URL: ", job.URL)
+			fmt.Println("AdditionalParams: ", string(job.AdditionalParams))
+		}
+
+	}
+
+	c.JSON(http.StatusOK, gin.H{"clusters": sc.CM.Clusters})
 
 }

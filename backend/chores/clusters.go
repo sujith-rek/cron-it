@@ -17,8 +17,6 @@ type Job struct {
 	ExecString       string
 	AdditionalParams json.RawMessage
 	URL              string
-	LastExecuted     string
-	NextExecution    string
 }
 
 type Cluster struct {
@@ -131,6 +129,9 @@ func (cm *ClusterManager) splitCluster(clusterID string) {
 			}
 
 			cm.Size++
+
+			// call db update here
+
 			return
 		}
 	}

@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"strconv"
 	"strings"
 )
 
@@ -30,10 +31,27 @@ var (
 		"12": "December",
 		"*" : "Every",
 	}
+	MonthDays = map[string]int{
+		"1":  31,
+		"2":  29,
+		"3":  31,
+		"4":  30,
+		"5":  31,
+		"6":  30,
+		"7":  31,
+		"8":  31,
+		"9":  30,
+		"10": 31,
+		"11": 30,
+		"12": 31,
+	}
 )
 
 
 func ExtractNameFromExecString(execString string) string {
+
+	execString = CleanCronString(execString)
+
 	// split the exec string by space
 	execStringParts := strings.Split(execString, " ")
 	// minute, hour, day, month, day of week
@@ -76,4 +94,59 @@ func ExtractNameFromExecString(execString string) string {
 	}
 
 	return output
+}
+
+func CleanCronString(cronString string) string {
+	// trim
+	cronString = strings.TrimSpace(cronString)
+	// replace tabs with space
+	cronString = strings.ReplaceAll(cronString, "\t", " ")
+	// replace newlines with space
+	cronString = strings.ReplaceAll(cronString, "\n", " ")
+	// replace multiple spaces with single space
+	cronString = strings.Join(strings.Fields(cronString), " ")
+	return cronString
+}
+
+func ValidateCronString(cronString string) bool {
+	
+	cronString = CleanCronString(cronString)
+
+	// split the cron string by space
+	cronStringParts := strings.Split(cronString, " ")
+
+	// check if the length of the cron string is 5
+	if len(cronStringParts) != 5 {
+		return false
+	}
+
+	// its okay but nope
+	if cronStringParts[0] == "*" {
+		return false
+	} 
+
+	if cronStringParts[1] > "23" {
+		return false
+	}
+
+	if cronStringParts[3] > "12" {
+		return false
+	}
+
+	if cronStringParts[4] > "6" {
+		return false
+	}
+
+	days, err := strconv.Atoi(cronStringParts[2])
+
+	if err != nil {
+		return false
+	}
+
+	if days > MonthDays[cronStringParts[3]] {
+		return false
+	}
+
+	return true
+
 }
