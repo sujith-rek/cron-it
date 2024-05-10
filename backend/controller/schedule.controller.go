@@ -25,15 +25,30 @@ func NewScheduleController(db *gorm.DB) *ScheduleController {
 }
 
 func (sc *ScheduleController) CreateJobSchedule(c *gin.Context) {
-	
+
 	user, _ := c.Get("user")
 	var inputJob models.JobInput
 	var clusterDB models.Cluster
 	var jobDB models.Job
 	var clusterID string
+	var userDB models.User
 
 	if err := c.ShouldBindJSON(&inputJob); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// fetch user from db
+	res := sc.DB.Where("id = ?", user.(models.User).ID).First(&userDB)
+
+	if res.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": res.Error.Error()})
+		return
+	}
+
+	// if user.limit == 0 then abort
+	if userDB.Limit == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User limit reached"})
 		return
 	}
 
@@ -73,7 +88,7 @@ func (sc *ScheduleController) CreateJobSchedule(c *gin.Context) {
 		AdditionalParams: inputJob.AdditionalParams,
 	}
 
-	res := sc.DB.Create(&jobDB)
+	res = sc.DB.Create(&jobDB)
 
 	if res.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": res.Error.Error()})
