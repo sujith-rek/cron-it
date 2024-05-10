@@ -24,4 +24,6 @@ func (sr *ScheduleRouter) RegisterRoutes(router *gin.RouterGroup) {
 			"message": "meow",
 		})
 	})
+
+	rg.POST("/create", sr.ScheduleController.CreateJobSchedule)
 }
