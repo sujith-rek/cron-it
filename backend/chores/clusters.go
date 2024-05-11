@@ -40,14 +40,7 @@ func CreateClusterManager() *ClusterManager {
 	}
 }
 
-// createCluster creates a new cluster with the given name and execution string
-// deleteCluster deletes the cluster with the given ID
-// addJobToCluster adds a job to the cluster with the given ID
-// removeJobFromCluster removes a job from the cluster with the given ID
-// splitCluster splits the cluster with the given ID into two clusters
-// findClustersByExecString returns the cluster with the given execution string
-
-func (cm *ClusterManager) CreateCluster(name string, executionString string) (string) {
+func (cm *ClusterManager) CreateCluster(name string, executionString string) string {
 	if len(cm.Clusters) >= MaxClusterSize {
 		return ""
 	}
@@ -63,8 +56,8 @@ func (cm *ClusterManager) CreateCluster(name string, executionString string) (st
 	cm.Clusters = append(cm.Clusters, newCluster)
 	cm.Size++
 
-	return	newCluster.ID
-	
+	return newCluster.ID
+
 }
 
 func (cm *ClusterManager) DeleteCluster(clusterID string) {
@@ -137,14 +130,14 @@ func (cm *ClusterManager) splitCluster(clusterID string) {
 	}
 }
 
-func (cm *ClusterManager) FindClusterByExecString(executionString string) (string) {
+func (cm *ClusterManager) FindClusterByExecString(executionString string) string {
 	var clusters []Cluster
 	for _, cluster := range cm.Clusters {
 		if cluster.ExecutionString == executionString {
 			clusters = append(clusters, cluster)
 		}
 	}
-	
+
 	// return cluster with least jobs
 	if len(clusters) > 0 {
 		minJobs := clusters[0].Size
@@ -160,4 +153,3 @@ func (cm *ClusterManager) FindClusterByExecString(executionString string) (strin
 
 	return ""
 }
-

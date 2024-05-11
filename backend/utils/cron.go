@@ -29,7 +29,7 @@ var (
 		"10": "October",
 		"11": "November",
 		"12": "December",
-		"*" : "Every",
+		"*":  "Every",
 	}
 	MonthDays = map[string]int{
 		"1":  31,
@@ -46,7 +46,6 @@ var (
 		"12": 31,
 	}
 )
-
 
 func ExtractNameFromExecString(execString string) string {
 
@@ -109,7 +108,7 @@ func CleanCronString(cronString string) string {
 }
 
 func ValidateCronString(cronString string) bool {
-	
+
 	cronString = CleanCronString(cronString)
 
 	// split the cron string by space
@@ -123,28 +122,31 @@ func ValidateCronString(cronString string) bool {
 	// its okay but nope
 	if cronStringParts[0] == "*" {
 		return false
-	} 
+	}
 
-	if cronStringParts[1] > "23" {
+	if cronStringParts[1] != "*" && cronStringParts[1] > "23" {
 		return false
 	}
 
-	if cronStringParts[3] > "12" {
+	if cronStringParts[2] != "*" && cronStringParts[2] > "31" {
 		return false
 	}
 
-	if cronStringParts[4] > "6" {
+	if cronStringParts[4] != "*" && cronStringParts[4] > "6" {
 		return false
 	}
 
-	days, err := strconv.Atoi(cronStringParts[2])
+	if cronStringParts[2] != "*" {
 
-	if err != nil {
-		return false
-	}
+		days, err := strconv.Atoi(cronStringParts[2])
 
-	if days > MonthDays[cronStringParts[3]] {
-		return false
+		if err != nil {
+			return false
+		}
+
+		if days > MonthDays[cronStringParts[3]] {
+			return false
+		}
 	}
 
 	return true
