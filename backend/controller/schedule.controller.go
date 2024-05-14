@@ -6,9 +6,11 @@ import (
 	"cronbackend/utils"
 
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type ScheduleController struct {
@@ -63,7 +65,11 @@ func (sc *ScheduleController) CreateJobSchedule(c *gin.Context) {
 	clusterName := utils.ExtractNameFromExecString(inputJob.ExecString)
 
 	if clusterID == "" {
-		clusterID = sc.CM.CreateCluster(clusterName, inputJob.ExecString)
+
+		// generate a new cluster ID with a UUID generator
+		clusterID = uuid.New().String()
+
+		clusterID = sc.CM.CreateCluster(clusterName, inputJob.ExecString, clusterID)
 
 		if clusterID == "" {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Max cluster size reached"})
@@ -145,3 +151,49 @@ func (sc *ScheduleController) PrintCluster(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"clusters": sc.CM.Clusters})
 
 }
+
+
+func (sc *ScheduleController) RecoverCluster(c *gin.Context) {
+
+	// fetch all clusters from db
+	var clusters []models.Cluster
+
+	// fetch clusters along with jobs
+	res := sc.DB.Preload("Jobs").Find(&clusters)
+
+	if res.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": res.Error.Error()})
+		return
+	}
+
+
+	fmt.Println("Clusters: ", clusters)
+	for _, cluster := range clusters {
+		
+		jobChore := chores.Cluster{
+			ID:              cluster.ID,
+			Name:            cluster.Name,
+			ExecutionString: cluster.ExecutionString,
+			Size:            cluster.Size,
+			Jobs: 		  []chores.Job{},
+		}
+
+		for _, job := range cluster.Jobs {
+			jobChore.Jobs = append(jobChore.Jobs, chores.Job{
+				ID:               job.ID,
+				Name:             job.Name,
+				UserID:           job.UserID,
+				ClusterID:        job.ClusterID,
+				ExecString:       job.ExecString,
+				AdditionalParams: job.AdditionalParams,
+				URL:              job.URL,
+			})
+		}
+
+		sc.CM.AddClusterForRecovery(jobChore)
+	}
+
+	c.JSON(http.StatusOK, gin.H{"clusters": sc.CM.Clusters})
+
+}
+

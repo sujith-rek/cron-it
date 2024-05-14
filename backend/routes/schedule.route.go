@@ -27,4 +27,5 @@ func (sr *ScheduleRouter) RegisterRoutes(router *gin.RouterGroup) {
 
 	rg.POST("/create", sr.ScheduleController.CreateJobSchedule)
 	rg.GET("/print", sr.ScheduleController.PrintCluster)
+	
 }

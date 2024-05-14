@@ -40,14 +40,14 @@ func CreateClusterManager() *ClusterManager {
 	}
 }
 
-func (cm *ClusterManager) CreateCluster(name string, executionString string) string {
+func (cm *ClusterManager) CreateCluster(name string, executionString string, id string) string {
 	if len(cm.Clusters) >= MaxClusterSize {
 		return ""
 	}
 
 	// generate a new cluster ID with a UUID generator
 	newCluster := Cluster{
-		ID:              uuid.New().String(),
+		ID:              id,
 		Name:            name,
 		ExecutionString: executionString,
 		Size:            0,
@@ -59,6 +59,7 @@ func (cm *ClusterManager) CreateCluster(name string, executionString string) str
 	return newCluster.ID
 
 }
+
 
 func (cm *ClusterManager) DeleteCluster(clusterID string) {
 	for i, cluster := range cm.Clusters {
@@ -152,4 +153,19 @@ func (cm *ClusterManager) FindClusterByExecString(executionString string) string
 	}
 
 	return ""
+}
+
+
+// RECOVERY FUNCTIONS
+func (cm *ClusterManager) AddClusterForRecovery(cluster Cluster) {
+	cm.Clusters = append(cm.Clusters, cluster)
+	cm.Size++
+}
+
+func (cm *ClusterManager) RecoverClusterManager(clusters []Cluster) bool {
+	for _, cluster := range clusters {
+		cm.AddClusterForRecovery(cluster)
+	}
+
+	return true
 }

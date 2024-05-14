@@ -7,6 +7,7 @@ import (
 	"log"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
+	"net/http"
 
 )
 
@@ -45,6 +46,20 @@ func init() {
 
 }
 
+func recoverOnRestart(){
+	// call localhost:8080/recover to recover all jobs
+	response, err := http.Get("http://localhost:8080/recover")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if response.StatusCode != 200 {
+		log.Fatal("Failed to recover jobs")
+	}
+
+	log.Println("Recovered all jobs", response.Status)
+}
+
 
 func main() {
 	config, err := db.LoadConfig(".")
@@ -63,6 +78,8 @@ func main() {
 	userRouter.RegisterRoutes(router)
 	ScheduleRouter.RegisterRoutes(router)
 	CheckRouter.RegisterRoutes(router)
+
+	recoverOnRestart()
 
 	log.Fatal(server.Run(":" + config.ServerPort))
 
