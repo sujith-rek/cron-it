@@ -17,4 +17,6 @@ func NewCheckRouter(cc *controller.CheckingController) *CheckRouter {
 func (cr *CheckRouter) RegisterRoutes(router *gin.RouterGroup) {
 	rg := router.Group("/checks")
 	rg.Use(middleware.UnwrapUserToken())
+
+	rg.POST("/ping/:userID/:pingID", cr.CheckController.Ping)
 }

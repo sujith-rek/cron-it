@@ -15,8 +15,11 @@ func NewUserRouter(uc *controller.UserController) *UserRouter {
 }
 
 func (ur *UserRouter) RegisterRoutes(router *gin.RouterGroup) {
-	router.POST("/register", ur.UserController.Register)
-	router.POST("/login", ur.UserController.Login)
-	router.POST(("/refresh"), ur.UserController.RefreshToken)
-	router.POST(("/logout"), middleware.UnwrapUserToken(), ur.UserController.Logout)
+
+	rg := router.Group("/users")
+
+	rg.POST("/register", ur.UserController.Register)
+	rg.POST("/login", ur.UserController.Login)
+	rg.POST("/refresh", ur.UserController.RefreshToken)
+	rg.POST("/logout", middleware.UnwrapUserToken(), ur.UserController.Logout)
 }
