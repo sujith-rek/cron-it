@@ -19,22 +19,27 @@ func ConnectDB(config *Config) {
 	if config.Migrate {
 		err = db.AutoMigrate(&models.User{})
 		if err != nil {
-			panic("failed to migrate database")
+			panic("failed to migrate User database")
 		}
 
 		err = db.AutoMigrate(&models.ScheduleCluster{})
 		if err != nil {
-			panic("failed to migrate database")
+			panic("failed to migrate ScheduleCluster database")
 		}
 
 		err = db.AutoMigrate(&models.ScheduleJob{})
 		if err != nil {
-			panic("failed to migrate database")
+			panic("failed to migrate ScheduleJob database")
 		}
 
-		err = db.AutoMigrate(&models.CheckJobs{})
+		err = db.AutoMigrate(&models.CheckJob{})
 		if err != nil {
-			panic("failed to migrate database")
+			panic("failed to migrate CheckJob database")
+		}
+
+		err = db.AutoMigrate(&models.CheckCluster{})
+		if err != nil {
+			panic("failed to migrate CheckCluster database")
 		}
 	}
 
