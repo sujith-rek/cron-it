@@ -22,10 +22,14 @@ func NewScheduleController(db *gorm.DB) *ScheduleController {
 
 	cm := chores.CreateClusterManager()
 
-	return &ScheduleController{
+	sc := &ScheduleController{
 		DB: db,
 		CM: cm,
 	}
+
+	sc.recoverCluster()
+
+	return sc
 }
 
 func (sc *ScheduleController) CreateJobSchedule(c *gin.Context) {
@@ -136,15 +140,16 @@ func (sc *ScheduleController) PrintCluster(c *gin.Context) {
 
 	for _, cluster := range sc.CM.Clusters {
 
-		fmt.Println("Cluster: ", cluster)
-
 		for _, job := range cluster.Jobs {
 			fmt.Println("Cluster: ", cluster.Name)
 			fmt.Println("Job: ", job.Name)
 			fmt.Println("ExecString: ", job.ExecString)
 			fmt.Println("URL: ", job.URL)
 			fmt.Println("AdditionalParams: ", string(job.AdditionalParams))
+			fmt.Println("-------------------------------------------------")
 		}
+
+		fmt.Println("=====================================================")
 
 	}
 
@@ -153,7 +158,7 @@ func (sc *ScheduleController) PrintCluster(c *gin.Context) {
 }
 
 
-func (sc *ScheduleController) RecoverCluster(c *gin.Context) {
+func (sc *ScheduleController) recoverCluster(){
 
 	// fetch all clusters from db
 	var clusters []models.Cluster
@@ -162,12 +167,10 @@ func (sc *ScheduleController) RecoverCluster(c *gin.Context) {
 	res := sc.DB.Preload("Jobs").Find(&clusters)
 
 	if res.Error != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": res.Error.Error()})
+		fmt.Println("Error fetching clusters: ", res.Error)
 		return
 	}
 
-
-	fmt.Println("Clusters: ", clusters)
 	for _, cluster := range clusters {
 		
 		jobChore := chores.Cluster{
@@ -193,7 +196,7 @@ func (sc *ScheduleController) RecoverCluster(c *gin.Context) {
 		sc.CM.AddClusterForRecovery(jobChore)
 	}
 
-	c.JSON(http.StatusOK, gin.H{"clusters": sc.CM.Clusters})
+	fmt.Println("CLusterManager Recovered")
 
 }
 
