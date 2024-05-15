@@ -6,7 +6,7 @@ type User struct {
 	Password      string      `gorm:"not null" json:"password_hash"`
 	Name          string      `json:"name"`
 	Limit         int         `json:"limit" gorm:"default:3"`
-	ScheduledJobs []Job       `gorm:"foreignKey:UserID" json:"scheduled_jobs"`
+	ScheduledJobs []ScheduleJob       `gorm:"foreignKey:UserID" json:"scheduled_jobs"`
 	CheckJobs     []CheckJobs `gorm:"foreignKey:UserID" json:"check_jobs"`
 }
 

@@ -15,7 +15,7 @@ import (
 
 type ScheduleController struct {
 	DB *gorm.DB
-	CM *chores.ClusterManager
+	CM *chores.SchedulesClusterManager
 }
 
 func NewScheduleController(db *gorm.DB) *ScheduleController {
@@ -36,8 +36,8 @@ func (sc *ScheduleController) CreateJobSchedule(c *gin.Context) {
 
 	user, _ := c.Get("user")
 	var inputJob models.JobInput
-	var clusterDB models.Cluster
-	var jobDB models.Job
+	var clusterDB models.ScheduleCluster
+	var jobDB models.ScheduleJob
 	var clusterID string
 	var userDB models.User
 
@@ -80,7 +80,7 @@ func (sc *ScheduleController) CreateJobSchedule(c *gin.Context) {
 			return
 		}
 
-		clusterDB = models.Cluster{
+		clusterDB = models.ScheduleCluster{
 			ID:              clusterID,
 			Name:            clusterName,
 			ExecutionString: inputJob.ExecString,
@@ -96,7 +96,7 @@ func (sc *ScheduleController) CreateJobSchedule(c *gin.Context) {
 
 	}
 
-	jobDB = models.Job{
+	jobDB = models.ScheduleJob{
 		Name:             inputJob.Name,
 		ExecString:       inputJob.ExecString,
 		UserID:           user.(models.User).ID,
@@ -112,7 +112,7 @@ func (sc *ScheduleController) CreateJobSchedule(c *gin.Context) {
 	}
 
 	// update cluster size in db
-	res = sc.DB.Model(&models.Cluster{}).Where("id = ?", clusterID).Update("size", gorm.Expr("size + 1"))
+	res = sc.DB.Model(&models.ScheduleCluster{}).Where("id = ?", clusterID).Update("size", gorm.Expr("size + 1"))
 
 	if res.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": res.Error.Error()})
@@ -160,7 +160,7 @@ func (sc *ScheduleController) PrintCluster(c *gin.Context) {
 func (sc *ScheduleController) recoverCluster() {
 
 	// fetch all clusters from db
-	var clusters []models.Cluster
+	var clusters []models.ScheduleCluster
 
 	// fetch clusters along with jobs
 	res := sc.DB.Preload("Jobs").Find(&clusters)

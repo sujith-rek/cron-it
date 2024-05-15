@@ -27,20 +27,20 @@ type Cluster struct {
 	Size            int
 }
 
-type ClusterManager struct {
+type SchedulesClusterManager struct {
 	Size     int
 	Clusters []Cluster
 }
 
 // createClusterManager creates a new cluster manager
-func CreateClusterManager() *ClusterManager {
-	return &ClusterManager{
+func CreateClusterManager() *SchedulesClusterManager {
+	return &SchedulesClusterManager{
 		Size:     0,
 		Clusters: []Cluster{},
 	}
 }
 
-func (cm *ClusterManager) CreateCluster(name string, executionString string, id string) string {
+func (cm *SchedulesClusterManager) CreateCluster(name string, executionString string, id string) string {
 	if len(cm.Clusters) >= MaxClusterSize {
 		return ""
 	}
@@ -61,7 +61,7 @@ func (cm *ClusterManager) CreateCluster(name string, executionString string, id 
 }
 
 
-func (cm *ClusterManager) DeleteCluster(clusterID string) {
+func (cm *SchedulesClusterManager) DeleteCluster(clusterID string) {
 	for i, cluster := range cm.Clusters {
 		if cluster.ID == clusterID {
 			cm.Clusters = append(cm.Clusters[:i], cm.Clusters[i+1:]...)
@@ -71,7 +71,7 @@ func (cm *ClusterManager) DeleteCluster(clusterID string) {
 	}
 }
 
-func (cm *ClusterManager) AddJobToCluster(clusterID string, job Job) {
+func (cm *SchedulesClusterManager) AddJobToCluster(clusterID string, job Job) {
 	for i, cluster := range cm.Clusters {
 		if cluster.ID == clusterID {
 			cm.Clusters[i].Jobs = append(cm.Clusters[i].Jobs, job)
@@ -88,7 +88,7 @@ func (cm *ClusterManager) AddJobToCluster(clusterID string, job Job) {
 	}
 }
 
-func (cm *ClusterManager) RemoveJobFromCluster(clusterID string, job Job) {
+func (cm *SchedulesClusterManager) RemoveJobFromCluster(clusterID string, job Job) {
 	for i, cluster := range cm.Clusters {
 		if cluster.ID == clusterID {
 			for j, clusterJob := range cluster.Jobs {
@@ -102,7 +102,7 @@ func (cm *ClusterManager) RemoveJobFromCluster(clusterID string, job Job) {
 	}
 }
 
-func (cm *ClusterManager) splitCluster(clusterID string) {
+func (cm *SchedulesClusterManager) splitCluster(clusterID string) {
 	for _, cluster := range cm.Clusters {
 		if cluster.ID == clusterID {
 			newCluster := Cluster{
@@ -131,7 +131,7 @@ func (cm *ClusterManager) splitCluster(clusterID string) {
 	}
 }
 
-func (cm *ClusterManager) FindClusterByExecString(executionString string) string {
+func (cm *SchedulesClusterManager) FindClusterByExecString(executionString string) string {
 	var clusters []Cluster
 	for _, cluster := range cm.Clusters {
 		if cluster.ExecutionString == executionString {
@@ -157,12 +157,12 @@ func (cm *ClusterManager) FindClusterByExecString(executionString string) string
 
 
 // RECOVERY FUNCTIONS
-func (cm *ClusterManager) AddClusterForRecovery(cluster Cluster) {
+func (cm *SchedulesClusterManager) AddClusterForRecovery(cluster Cluster) {
 	cm.Clusters = append(cm.Clusters, cluster)
 	cm.Size++
 }
 
-func (cm *ClusterManager) RecoverClusterManager(clusters []Cluster) bool {
+func (cm *SchedulesClusterManager) RecoverClusterManager(clusters []Cluster) bool {
 	for _, cluster := range clusters {
 		cm.AddClusterForRecovery(cluster)
 	}

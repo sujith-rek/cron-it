@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type Job struct {
+type ScheduleJob struct {
 	ID               string          `gorm:"primaryKey;type:uuid;default:uuid_generate_v4()" json:"id"`
 	UserID           string          `gorm:"type:uuid;not null" json:"user_id"`
 	ClusterID        string          `gorm:"type:uuid;not null" json:"cluster_id"`
@@ -16,10 +16,10 @@ type Job struct {
 	UpdatedAt        time.Time       `json:"updated_at" gorm:"default:now()"`
 	Name             string          `json:"name" gorm:"not null"`
 
-	Cluster Cluster `gorm:"foreignKey:ClusterID"`
+	Cluster ScheduleCluster `gorm:"foreignKey:ClusterID"`
 }
 
-type Cluster struct {
+type ScheduleCluster struct {
 	ID              string    `gorm:"primaryKey;type:uuid;default:uuid_generate_v4()" json:"id"`
 	Name            string    `json:"name" gorm:"not null"`
 	ExecutionString string    `json:"execution_string" gorm:"not null"`
@@ -27,7 +27,7 @@ type Cluster struct {
 	CreatedAt       time.Time `json:"created_at" gorm:"default:now()"`
 	UpdatedAt       time.Time `json:"updated_at" gorm:"default:now()"`
 
-	Jobs []Job `gorm:"foreignKey:ClusterID" json:"jobs"`
+	Jobs []ScheduleJob `gorm:"foreignKey:ClusterID" json:"jobs"`
 }
 
 type JobInput struct {

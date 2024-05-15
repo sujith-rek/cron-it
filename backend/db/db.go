@@ -22,12 +22,12 @@ func ConnectDB(config *Config) {
 			panic("failed to migrate database")
 		}
 
-		err = db.AutoMigrate(&models.Cluster{})
+		err = db.AutoMigrate(&models.ScheduleCluster{})
 		if err != nil {
 			panic("failed to migrate database")
 		}
 
-		err = db.AutoMigrate(&models.Job{})
+		err = db.AutoMigrate(&models.ScheduleJob{})
 		if err != nil {
 			panic("failed to migrate database")
 		}
