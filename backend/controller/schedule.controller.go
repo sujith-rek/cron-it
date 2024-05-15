@@ -157,8 +157,7 @@ func (sc *ScheduleController) PrintCluster(c *gin.Context) {
 
 }
 
-
-func (sc *ScheduleController) recoverCluster(){
+func (sc *ScheduleController) recoverCluster() {
 
 	// fetch all clusters from db
 	var clusters []models.Cluster
@@ -172,13 +171,13 @@ func (sc *ScheduleController) recoverCluster(){
 	}
 
 	for _, cluster := range clusters {
-		
+
 		jobChore := chores.Cluster{
 			ID:              cluster.ID,
 			Name:            cluster.Name,
 			ExecutionString: cluster.ExecutionString,
 			Size:            cluster.Size,
-			Jobs: 		  []chores.Job{},
+			Jobs:            []chores.Job{},
 		}
 
 		for _, job := range cluster.Jobs {
@@ -199,4 +198,3 @@ func (sc *ScheduleController) recoverCluster(){
 	fmt.Println("CLusterManager Recovered")
 
 }
-
