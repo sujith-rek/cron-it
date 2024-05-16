@@ -1,16 +1,16 @@
 package routes
 
 import (
-	"cronbackend/controller"
+	"cronbackend/controllers"
 	"cronbackend/middleware"
 	"github.com/gin-gonic/gin"
 )
 
 type UserRouter struct {
-	UserController *controller.UserController
+	UserController *controllers.UserController
 }
 
-func NewUserRouter(uc *controller.UserController) *UserRouter {
+func NewUserRouter(uc *controllers.UserController) *UserRouter {
 	return &UserRouter{UserController: uc}
 }
 

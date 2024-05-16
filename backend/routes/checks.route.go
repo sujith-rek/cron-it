@@ -1,16 +1,16 @@
 package routes
 
 import (
-	"cronbackend/controller"
+	"cronbackend/controllers"
 	"cronbackend/middleware"
 	"github.com/gin-gonic/gin"
 )
 
 type CheckRouter struct {
-	CheckController *controller.CheckingController
+	CheckController *controllers.CheckingController
 }
 
-func NewCheckRouter(cc *controller.CheckingController) *CheckRouter {
+func NewCheckRouter(cc *controllers.CheckingController) *CheckRouter {
 	return &CheckRouter{CheckController: cc}
 }
 

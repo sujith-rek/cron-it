@@ -1,7 +1,7 @@
 package main
 
 import (
-	"cronbackend/controller"
+	"cronbackend/controllers"
 	"cronbackend/db"
 	"cronbackend/routes"
 	"github.com/gin-contrib/cors"
@@ -10,13 +10,13 @@ import (
 )
 
 var (
-	userController controller.UserController
+	userController controllers.UserController
 	userRouter     routes.UserRouter
 
-	ScheduleController controller.ScheduleController
+	ScheduleController controllers.ScheduleController
 	ScheduleRouter     routes.ScheduleRouter
 
-	CheckController controller.CheckingController
+	CheckController controllers.CheckingController
 	CheckRouter     routes.CheckRouter
 
 	server *gin.Engine
@@ -30,13 +30,13 @@ func init() {
 
 	db.ConnectDB(&config)
 
-	userController = *controller.NewUserController(db.DB)
+	userController = *controllers.NewUserController(db.DB)
 	userRouter = *routes.NewUserRouter(&userController)
 
-	ScheduleController = *controller.NewScheduleController(db.DB)
+	ScheduleController = *controllers.NewScheduleController(db.DB)
 	ScheduleRouter = *routes.NewScheduleRouter(&ScheduleController)
 
-	CheckController = *controller.NewCheckingController(db.DB)
+	CheckController = *controllers.NewCheckingController(db.DB)
 	CheckRouter = *routes.NewCheckRouter(&CheckController)
 
 	server = gin.Default()

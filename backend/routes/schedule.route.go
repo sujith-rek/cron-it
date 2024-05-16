@@ -1,16 +1,16 @@
 package routes
 
 import (
-	"cronbackend/controller"
+	"cronbackend/controllers"
 	"cronbackend/middleware"
 	"github.com/gin-gonic/gin"
 )
 
 type ScheduleRouter struct {
-	ScheduleController *controller.ScheduleController
+	ScheduleController *controllers.ScheduleController
 }
 
-func NewScheduleRouter(sc *controller.ScheduleController) *ScheduleRouter {
+func NewScheduleRouter(sc *controllers.ScheduleController) *ScheduleRouter {
 	return &ScheduleRouter{ScheduleController: sc}
 }
 
