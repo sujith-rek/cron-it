@@ -20,7 +20,7 @@ type ScheduleController struct {
 
 func NewScheduleController(db *gorm.DB) *ScheduleController {
 
-	cm := chores.CreateClusterManager()
+	cm := chores.CreateSchedulesClusterManager()
 
 	sc := &ScheduleController{
 		DB: db,
@@ -65,7 +65,7 @@ func (sc *ScheduleController) CreateJobSchedule(c *gin.Context) {
 		return
 	}
 
-	clusterID = sc.CM.FindClusterByExecString(inputJob.ExecString)
+	clusterID = sc.CM.FindScheduleClusterByExecString(inputJob.ExecString)
 	clusterName := utils.ExtractNameFromExecString(inputJob.ExecString)
 
 	if clusterID == "" {
@@ -73,7 +73,7 @@ func (sc *ScheduleController) CreateJobSchedule(c *gin.Context) {
 		// generate a new cluster ID with a UUID generator
 		clusterID = uuid.New().String()
 
-		clusterID = sc.CM.CreateCluster(clusterName, inputJob.ExecString, clusterID)
+		clusterID = sc.CM.CreateScheduleCluster(clusterName, inputJob.ExecString, clusterID)
 
 		if clusterID == "" {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Max cluster size reached"})
@@ -130,7 +130,7 @@ func (sc *ScheduleController) CreateJobSchedule(c *gin.Context) {
 		URL:              jobDB.URL,
 	}
 
-	sc.CM.AddJobToCluster(clusterID, jobChore)
+	sc.CM.AddJobToScheduleCluster(clusterID, jobChore)
 
 	c.JSON(http.StatusOK, gin.H{"job": jobDB})
 
@@ -192,7 +192,7 @@ func (sc *ScheduleController) recoverCluster() {
 			})
 		}
 
-		sc.CM.AddClusterForRecovery(jobChore)
+		sc.CM.AddScheduleClusterForRecovery(jobChore)
 	}
 
 	fmt.Println("CLusterManager Recovered")
