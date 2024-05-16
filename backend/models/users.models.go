@@ -5,7 +5,8 @@ type User struct {
 	Email         string        `gorm:"uniqueIndex;not null" json:"email"`
 	Password      string        `gorm:"not null" json:"password_hash"`
 	Name          string        `json:"name"`
-	Limit         int           `json:"limit" gorm:"default:3"`
+	CheckLimit    int           `json:"check_limit" gorm:"default:3"`
+	ScheduleLimit int           `json:"schedule_limit" gorm:"default:3"`
 	ScheduledJobs []ScheduleJob `gorm:"foreignKey:UserID" json:"scheduled_jobs"`
 	CheckJobs     []CheckJob    `gorm:"foreignKey:UserID" json:"check_jobs"`
 }
@@ -22,8 +23,9 @@ type UserLogin struct {
 }
 
 type UserResponse struct {
-	ID    string `json:"id"`
-	Email string `json:"email"`
-	Name  string `json:"name"`
-	Limit int    `json:"limit"`
+	ID            string `json:"id"`
+	Email         string `json:"email"`
+	Name          string `json:"name"`
+	CheckLimit    int    `json:"check_limit"`
+	ScheduleLimit int    `json:"schedule_limit"`
 }

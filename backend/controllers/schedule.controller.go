@@ -55,7 +55,7 @@ func (sc *ScheduleController) CreateJobSchedule(c *gin.Context) {
 	}
 
 	// if user.limit == 0 then abort
-	if userDB.Limit == 0 {
+	if userDB.ScheduleLimit == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User limit reached"})
 		return
 	}

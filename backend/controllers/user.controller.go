@@ -46,7 +46,6 @@ func (uc *UserController) Register(c *gin.Context) {
 		Email:    userSignUp.Email,
 		Password: hashedPassword,
 		Name:     userSignUp.Name,
-		Limit:    3,
 	}
 
 	res := uc.DataBase.Create(&user)
@@ -90,7 +89,8 @@ func (uc *UserController) Login(c *gin.Context) {
 		ID:    user.ID,
 		Email: user.Email,
 		Name:  user.Name,
-		Limit: user.Limit,
+		CheckLimit: user.CheckLimit,
+		ScheduleLimit: user.ScheduleLimit,
 	}
 
 	config, _ := db.LoadConfig(".")
