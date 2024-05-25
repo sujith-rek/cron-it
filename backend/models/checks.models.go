@@ -6,9 +6,9 @@ import (
 )
 
 type CheckJob struct {
-	ID         string          `gorm:"primaryKey;type:uuid;default:uuid_generate_v4();unique" json:"id"`
+	ID         string          `gorm:"primaryKey;type:uuid;default:uuid_generate_v4();unique;not null" json:"id"`
 	UserID     string          `gorm:"type:uuid;not null" json:"user_id"`
-	UserMail   string          `json:"user_mail"`
+	UserMail   string          `json:"user_mail" gorm:"not null"`
 	ClusterID  string          `gorm:"type:uuid;not null" json:"cluster_id"`
 
 	Name       string          `json:"name" gorm:"not null"`
@@ -23,7 +23,7 @@ type CheckJob struct {
 }
 
 type CheckCluster struct {
-	ID              string     `gorm:"primaryKey;type:uuid;default:uuid_generate_v4();unique" json:"id"`
+	ID              string     `gorm:"primaryKey;type:uuid;default:uuid_generate_v4();unique;not null" json:"id"`
 	Name            string     `json:"name" gorm:"not null"`
 	ExecutionString string     `json:"execution_string" gorm:"not null"`
 	Size            int        `json:"size" gorm:"not null"`

@@ -2,7 +2,6 @@ package utils
 
 import (
 	"cronbackend/db"
-	// "cronbackend/models"
 	"encoding/base64"
 	"fmt"
 	"time"
@@ -71,7 +70,7 @@ func ValidateToken(token string, publicKey string) (interface{}, error) {
 
 func GenerateNewTokens(refreshToken string, config db.Config) (string, string, interface{}, error) {
 	user, err := ValidateToken(refreshToken, config.RefreshTokenPublicKey)
-	// map[email:abc@gmail.com id:3d49ec24-ecf5-47ea-86be-d25d26672b7a limit:3 name:123456]
+	
 	if err != nil {
 		return "", "", nil, fmt.Errorf("validate refresh token: %w", err)
 	}

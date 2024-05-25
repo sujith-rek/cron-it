@@ -42,3 +42,4 @@ func CreateCheckClusterManager() *CheckClusterManager {
 		Clusters: []CheckCluster{},
 	}
 }
+

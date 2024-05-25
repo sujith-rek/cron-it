@@ -1,10 +1,10 @@
 package models
 
 type User struct {
-	ID            string        `gorm:"primaryKey;type:uuid;default:uuid_generate_v4();unique" json:"id"`
+	ID            string        `gorm:"primaryKey;type:uuid;default:uuid_generate_v4();unique;not null" json:"id"`
 	Email         string        `gorm:"uniqueIndex;not null" json:"email"`
 	Password      string        `gorm:"not null" json:"password_hash"`
-	Name          string        `json:"name"`
+	Name          string        `json:"name" gorm:"not null"`
 	CheckLimit    int           `json:"check_limit" gorm:"default:3"`
 	ScheduleLimit int           `json:"schedule_limit" gorm:"default:3"`
 	ScheduledJobs []ScheduleJob `gorm:"foreignKey:UserID" json:"scheduled_jobs"`
